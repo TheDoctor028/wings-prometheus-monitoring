@@ -1,6 +1,7 @@
 FROM python:3.8
 # Default port for monitoring api
-EXPOSE 9101
+ENV PORT 9001
+EXPOSE 9001
 # The url to the wings api (with port) Default port: 8080
 ENV API_URL http://localhost:8080
 # API key to authenticate to the api
