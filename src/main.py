@@ -3,25 +3,22 @@ import time
 import http.client
 import dotenv
 import os
+import asyncio
+import aiohttp
 
-# Create a metric to track time spent and requests made.
 WINGS_STATUS = Enum("wings_status_1", "Wings status", states=["online", "offline"])
 
 
-def getStatus() -> int:
-    # TODO move to env and create config
-    connection = http.client.HTTPSConnection("fqnd.wings.replace", port=8080)
-    connection.request("GET", "/api/system", headers={"Authorization": "Bearer " + os.getenv("WINGS_TOKEN")})
-    res_status = connection.getresponse().getcode()
-    return res_status
-
-
-def updateStatus():
-    if getStatus() == 200:
-        WINGS_STATUS.state("online")
-    else:
-        WINGS_STATUS.state("offline")
-
+async def updateStatuses():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+                "https://{0}/api/system".format(os.environ.get("WINGS_URL")),
+                headers={"Authorization": "Bearer " + os.environ.get("WINGS_TOKEN")}) as response:
+            if response.status == 200:
+                WINGS_STATUS.state("online")
+            else:
+                WINGS_STATUS.state("offline")
+    pass
 
 if __name__ == '__main__':
     dotenv.load_dotenv()
@@ -30,5 +27,5 @@ if __name__ == '__main__':
     start_http_server(int(os.environ.get("PORT")))
     print("Server started!")
     while True:
-        updateStatus()
-        time.sleep(100)
+        asyncio.run(updateStatuses())
+        time.sleep(int(os.environ.get("CHECK_INTERVAL_MS")))
