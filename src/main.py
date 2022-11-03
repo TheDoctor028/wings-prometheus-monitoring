@@ -1,31 +1,29 @@
 from prometheus_client import start_http_server, Enum
+from envs import ENVS, WINGS_COUNT, WINGS_URL, WINGS_API_TOKEN
 import time
-import http.client
-import dotenv
-import os
 import asyncio
-import aiohttp
+import envs
+import logging
+import logger
+from models.wings import Wings
 
-WINGS_STATUS = Enum("wings_status_1", "Wings status", states=["online", "offline"])
+wings = [Wings("wings_{0}".format(i), ENVS[WINGS_URL(i)], ENVS[WINGS_API_TOKEN(i)]) for i in range(1, WINGS_COUNT)]
 
 
 async def updateStatuses():
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
-                "https://{0}/api/system".format(os.environ.get("WINGS_URL")),
-                headers={"Authorization": "Bearer " + os.environ.get("WINGS_TOKEN")}) as response:
-            if response.status == 200:
-                WINGS_STATUS.state("online")
-            else:
-                WINGS_STATUS.state("offline")
+    for wing in wings:
+        await asyncio.create_task(wing.updateStatus(), name="wings_status_{0}_update".format(wing.name))
     pass
 
 if __name__ == '__main__':
-    dotenv.load_dotenv()
-    print()
-    print("Starting server...")
-    start_http_server(int(os.environ.get("PORT")))
-    print("Server started!")
+    envs.init()
+    logger.init()
+    logging.info("Starting...")
+    start_http_server(int(ENVS["PORT"]))
+    logging.info("Metrics server started on {0}...".format(ENVS["PORT"]))
+    logging.info("Starting update loop...")
     while True:
+        logging.log(logging.INFO, "Updating statuses...")
         asyncio.run(updateStatuses())
-        time.sleep(int(os.environ.get("CHECK_INTERVAL_MS")))
+        logging.log(logging.INFO, "Statuses updated!")
+        time.sleep(int(ENVS["CHECK_INTERVAL_S"]))
