@@ -17,7 +17,7 @@ async def updateStatuses():
 
 
 def loadWings():
-    return [Wings("wings_{0}".format(i), ENVS[WINGS_URL(i)], ENVS[WINGS_API_TOKEN(i)]) for i in range(1, GET_WINGS_COUNT())]
+    return [Wings("wings_{0}".format(i), ENVS[WINGS_URL(i)], ENVS[WINGS_API_TOKEN(i)]) for i in range(1, GET_WINGS_COUNT() + 1)]
 
 
 if __name__ == '__main__':
