@@ -1,5 +1,5 @@
 from prometheus_client import start_http_server, Enum
-from envs import ENVS, WINGS_COUNT, WINGS_URL, WINGS_API_TOKEN
+from envs import ENVS, WINGS_COUNT, WINGS_URL, WINGS_API_TOKEN, GET_WINGS_COUNT
 import time
 import asyncio
 import envs
@@ -7,7 +7,7 @@ import logging
 import logger
 from models.wings import Wings
 
-wings = [Wings("wings_{0}".format(i), ENVS[WINGS_URL(i)], ENVS[WINGS_API_TOKEN(i)]) for i in range(1, WINGS_COUNT)]
+wings = []
 
 
 async def updateStatuses():
@@ -15,9 +15,15 @@ async def updateStatuses():
         await asyncio.create_task(wing.updateStatus(), name="wings_status_{0}_update".format(wing.name))
     pass
 
+
+def loadWings():
+    return [Wings("wings_{0}".format(i), ENVS[WINGS_URL(i)], ENVS[WINGS_API_TOKEN(i)]) for i in range(1, GET_WINGS_COUNT())]
+
+
 if __name__ == '__main__':
     envs.init()
     logger.init()
+    wings = loadWings()
     logging.info("Starting...")
     start_http_server(int(ENVS["PORT"]))
     logging.info("Metrics server started on {0}...".format(ENVS["PORT"]))

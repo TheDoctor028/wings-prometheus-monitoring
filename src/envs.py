@@ -38,6 +38,7 @@ def loadWingsInstances():
             logger.envs.info("Wings instance {0} ({1}) loaded!".format(i, url))
         else:
             WINGS_COUNT = i - 1
+            ENVS["WINGS_COUNT"] = str(WINGS_COUNT)
             break
 
     logger.envs.info("{0} Wings instances loaded!".format(WINGS_COUNT))
@@ -50,3 +51,7 @@ def WINGS_URL(i):
 
 def WINGS_API_TOKEN(i):
     return "WINGS_{0}_TOKEN".format(i)
+
+
+def GET_WINGS_COUNT():
+    return int(ENVS["WINGS_COUNT"])
