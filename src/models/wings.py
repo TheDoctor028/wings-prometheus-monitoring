@@ -59,10 +59,14 @@ class Wings:
                 # Update the info
                 body = await response.content.readany()
                 data = json.decoder.JSONDecoder().decode(body.decode("utf-8"))
-                self.info.info(data)
+                self.info.info(mapDictToStrStrDict(data))
 
     async def update(self, response) -> None:
         if response.status == 200:
             self.status.state("online")
         else:
             self.status.state("offline")
+
+
+def mapDictToStrStrDict(d) -> dict:
+    return {str(k): str(v) for k, v in d.items()}
