@@ -1,5 +1,5 @@
 import json.decoder
-from prometheus_client import Enum
+from prometheus_client import Enum, Info
 import aiohttp
 
 
@@ -19,6 +19,8 @@ class Wings:
     status: Enum
         The status of the Wings instance (online/offline).
         This can be used in prometheus queries to check if the instance is online or not.
+    info: Info
+        The info of the Wings instance (version, etc.)
     Methods
     -------
     updateStatus()
@@ -34,22 +36,26 @@ class Wings:
     url: str
     apiToken: str
     status: Enum
+    info: Info
 
     def __init__(self, name, url, api_token) -> None:
         self.url = url
         self.apiToken = api_token
         self.status = Enum("wings_status_{0}".format(name), "Wings status", states=["online", "offline"])
+        self.info = Info("wings_info_{0}".format(name), "Wings info")
         pass
 
     async def updateStatus(self) -> None:
         async with aiohttp.ClientSession() as session:
             async with session.request("GET", "{0}/api/system".format(self.url),
                                        headers={"Authorization": "Bearer " + self.apiToken}) as response:
+                # Update the status
                 await self.update(response)
+
+                # Update the info
                 body = await response.content.readany()
-                res = json.encoder.JSONEncoder().encode(body)
-                print(res)
-        pass
+                data = json.decoder.JSONDecoder().decode(body.decode("utf-8"))
+                self.info.info(data)
 
     async def update(self, response) -> None:
         if response.status == 200:
