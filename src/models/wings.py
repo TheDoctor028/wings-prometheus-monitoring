@@ -11,6 +11,8 @@ class Wings:
 
     Attributes
     ----------
+    name: str
+        The name of the Wings instance
     url: str
         The url of the Wings instance (with protocol & port) (e.g. "https://wings.example.com:8080")
     apiToken: str
@@ -33,12 +35,14 @@ class Wings:
         If the response status is 200, the status will be set to online, otherwise offline.
     """
 
+    name: str
     url: str
     apiToken: str
     status: Enum
     info: Info
 
     def __init__(self, name, url, api_token) -> None:
+        self.name = name
         self.url = url
         self.apiToken = api_token
         self.status = Enum("wings_status_{0}".format(name), "Wings status", states=["online", "offline"])
