@@ -1,5 +1,2 @@
-prometheus-fastapi-instrumentator
 prometheus-client
-fastapi
-uvicorn[standard]
 aiohttp
