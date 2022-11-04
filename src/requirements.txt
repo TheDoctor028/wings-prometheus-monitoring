@@ -1,2 +1,4 @@
 prometheus-client
 aiohttp
+python-dotenv
+asyncio
