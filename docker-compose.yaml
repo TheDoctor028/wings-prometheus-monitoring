@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  wings-prometheus-monitoring:
+    image: kristofhetenyi228/wings-prometheus-monitoring:stable
+    container_name: wings-prometheus-monitoring
+    restart: unless-stopped
+    ports:
+      - "9001:9001"
+    environment:
+      - PORT=9001
+      - CHECK_INTERVAL_S=5
+      - WINGS_1_URL=https://localhost:8080
+      - WINGS_1_TOKEN=REPLACEMEWITHYOURTOKEN
