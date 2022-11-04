@@ -21,8 +21,8 @@ def loadWings():
 
 
 if __name__ == '__main__':
-    envs.init()
     logger.init()
+    envs.init()
     wings = loadWings()
     logger.root.info("Starting...")
     start_http_server(int(ENVS["PORT"]))
