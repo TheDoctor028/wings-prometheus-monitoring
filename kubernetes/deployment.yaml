@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wings-prometheus-monitoring
+  namespace: monitoring
+  labels:
+    app: wings-monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wings-monitoring
+  template:
+    metadata:
+      labels:
+        app: wings-monitoring
+    spec:
+      containers:
+      - name: monitoring
+        image: kristofhetenyi228/wings-prometheus-monitoring:latest
+        ports:
+          - containerPort: 9001
+        envFrom:
+          - configMapRef:
+              name: wings-prometheus-monitoring-config
+          - secretRef:
+              name: wings-prometheus-monitoring-secret
