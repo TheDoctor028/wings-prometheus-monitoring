@@ -106,6 +106,6 @@ _The numbers must be continuous._
 [https://hub.docker.com/r/kristofhetenyi228/wings-prometheus-monitoring](https://hub.docker.com/r/kristofhetenyi228/wings-prometheus-monitoring)
 
 #### Tags
-- `latest` - Latest version (Most of the time the `master` branch)
-- `stable` - Stable version (Latest release)
+- `latest` - Stable version (Latest release)
+- `beta`   - Pre-release version (Latest beta branch)
 - `vX.X.X` - Specific version
